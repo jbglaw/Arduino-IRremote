@@ -105,6 +105,14 @@ IRrecv::IRrecv (int recvpin)
 {
 	irparams.recvpin = recvpin;
 	irparams.blinkflag = 0;
+	irparams.inverted_input = false;
+}
+
+Rrecv::IRrecv (int recvpin, bool inverted_input)
+{
+	irparams.recvpin = recvpin;
+	irparams.blinkflag = 0;
+	irparams.inverted_input = inverted_input;
 }
 
 IRrecv::IRrecv (int recvpin, int blinkpin)
@@ -113,10 +121,17 @@ IRrecv::IRrecv (int recvpin, int blinkpin)
 	irparams.blinkpin = blinkpin;
 	pinMode(blinkpin, OUTPUT);
 	irparams.blinkflag = 0;
+	irparams.inverted_input = false;
 }
 
-
-
+IRrecv::IRrecv (int recvpin, int blinkpin, bool inverted_input)
+{
+	irparams.recvpin = recvpin;
+	irparams.blinkpin = blinkpin;
+	pinMode(blinkpin, OUTPUT);
+	irparams.blinkflag = 0;
+	irparams.inverted_input = inverted_input;
+}
 //+=============================================================================
 // initialization
 //

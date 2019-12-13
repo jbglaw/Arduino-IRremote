@@ -85,6 +85,11 @@ int  IRrecv::decode (decode_results *results)
 	if (decodeDenon(results))  return true ;
 #endif
 
+#if DECODE_RSTEP
+	DBG_PRINTLN("Attempting Ruwido rStep 38kHz and 56kHz decode");
+	if (decodeRstep(results))  return true;
+#endif
+
 #if DECODE_LEGO_PF
 	DBG_PRINTLN("Attempting Lego Power Functions");
 	if (decodeLegoPowerFunctions(results))  return true ;

@@ -130,10 +130,14 @@ ISR (TIMER_INTR_NAME)
 #endif
 {
 	TIMER_RESET;
+	uint8_t input;
 
 	// Read if IR Receiver -> SPACE [xmt LED off] or a MARK [xmt LED on]
 	// digitalRead() is very slow. Optimisation is possible, but makes the code unportable
-	uint8_t  irdata = (uint8_t)digitalRead(irparams.recvpin);
+	if (digitalRead (irparams.recvpin) == HIGH)
+		input = irparams.inverted_input? MARK: SPACE;
+	else
+		input = irparams.inverted_input? SPACE: MARK;
 
 	irparams.timer++;  // One more 50uS tick
 	if (irparams.rawlen >= RAWBUF)  irparams.rcvstate = STATE_OVERFLOW ;  // Buffer overflow
@@ -141,7 +145,7 @@ ISR (TIMER_INTR_NAME)
 	switch(irparams.rcvstate) {
 		//......................................................................
 		case STATE_IDLE: // In the middle of a gap
-			if (irdata == MARK) {
+			if (input == MARK) {
 				if (irparams.timer < GAP_TICKS)  {  // Not big enough to be a gap.
 					irparams.timer = 0;
 
@@ -157,7 +161,7 @@ ISR (TIMER_INTR_NAME)
 			break;
 		//......................................................................
 		case STATE_MARK:  // Timing Mark
-			if (irdata == SPACE) {   // Mark ended; Record time
+			if (input == SPACE) {   // Mark ended; Record time
 				irparams.rawbuf[irparams.rawlen++] = irparams.timer;
 				irparams.timer                     = 0;
 				irparams.rcvstate                  = STATE_SPACE;
@@ -165,7 +169,7 @@ ISR (TIMER_INTR_NAME)
 			break;
 		//......................................................................
 		case STATE_SPACE:  // Timing Space
-			if (irdata == MARK) {  // Space just ended; Record time
+			if (input == MARK) {  // Space just ended; Record time
 				irparams.rawbuf[irparams.rawlen++] = irparams.timer;
 				irparams.timer                     = 0;
 				irparams.rcvstate                  = STATE_MARK;
@@ -180,7 +184,7 @@ ISR (TIMER_INTR_NAME)
 			break;
 		//......................................................................
 		case STATE_STOP:  // Waiting; Measuring Gap
-		 	if (irdata == MARK)  irparams.timer = 0 ;  // Reset gap timer
+			if (input == MARK)  irparams.timer = 0 ;  // Reset gap timer
 		 	break;
 		//......................................................................
 		case STATE_OVERFLOW:  // Flag up a read overflow; Stop the State Machine
@@ -191,7 +195,7 @@ ISR (TIMER_INTR_NAME)
 
 	// If requested, flash LED while receiving IR data
 	if (irparams.blinkflag) {
-		if (irdata == MARK)
+		if (input == MARK)
 			if (irparams.blinkpin) digitalWrite(irparams.blinkpin, HIGH); // Turn user defined pin LED on
 				else BLINKLED_ON() ;   // if no user defined LED pin, turn default LED pin for the hardware on
 		else if (irparams.blinkpin) digitalWrite(irparams.blinkpin, LOW); // Turn user defined pin LED on

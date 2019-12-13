@@ -171,8 +171,10 @@ class decode_results
 class IRrecv
 {
 	public:
-		IRrecv (int recvpin) ;
+		IRrecv (int recvpin);
+		IRrecv (int recvpin, bool inverted_input);
 		IRrecv (int recvpin, int blinkpin);
+		IRrecv (int recvpin, int blinkpin, bool inverted_input);
 
 		void  blink13    (int blinkflag) ;
 		int   decode     (decode_results *results) ;

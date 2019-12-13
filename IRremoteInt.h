@@ -53,6 +53,7 @@ typedef
 		unsigned int  timer;           // State timer, counts 50uS ticks.
 		unsigned int  rawbuf[RAWBUF];  // raw data
 		uint8_t       overflow;        // Raw buffer overflow occurred
+		bool          inverted_input;  // Input pin is inverted.
 	}
 irparams_t;
 

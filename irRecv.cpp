@@ -108,7 +108,7 @@ IRrecv::IRrecv (int recvpin)
 	irparams.inverted_input = false;
 }
 
-Rrecv::IRrecv (int recvpin, bool inverted_input)
+IRrecv::IRrecv (int recvpin, bool inverted_input)
 {
 	irparams.recvpin = recvpin;
 	irparams.blinkflag = 0;
